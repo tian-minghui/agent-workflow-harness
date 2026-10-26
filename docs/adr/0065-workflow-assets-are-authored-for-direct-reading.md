@@ -1,0 +1,3 @@
+# Workflow assets are authored for direct reading
+
+A workflow bundle may contain authored prose, templates, references, and other assets just like a skill directory. The model may read those assets directly when the active stage guide references them; the control plane does not parse, inline, or transform those references. The benefit is authoring freedom and a simpler, skill-like experience. The accepted trade-off is weaker information hiding: while workflow graph authority remains with the control plane, agents can see the referenced bundle assets and may infer additional process context from them.

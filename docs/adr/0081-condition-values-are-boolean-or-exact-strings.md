@@ -1,0 +1,5 @@
+# Condition values are boolean or exact strings
+
+A narrow `when` predicate may compare a condition variable either to a boolean literal or to any other exact, single-line string literal. A bare `true` or `false` on the right-hand side is treated as a boolean condition value. Any other right-hand side is treated as text and compared exactly, without trimming, lowercasing, or applying YAML-style semantic equivalence.
+
+Start inputs and environment values are initially strings. During comparison they are normalized only for narrowly recognized boolean literals: `create_coding_work_item=true` compared with `true` is boolean true, while `entry_mode=confirmed_prd` compared with `confirmed_prd` is an exact string match. A string comparison therefore accepts `confirmed_prd`, `new_requirement`, or a Jev-style categorical decision without requiring the workflow to declare an enum type system. The tradeoff is that string comparison is deliberately unsmart: mixed case, surrounding whitespace, and empty strings are preserved and will not match a differently written literal.

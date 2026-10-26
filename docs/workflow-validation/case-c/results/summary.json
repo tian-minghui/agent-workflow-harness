@@ -1,0 +1,44 @@
+{
+  "case": "C",
+  "objective": "compare per-turn work-order exposure for one semantically equivalent three-stage workflow",
+  "repetitions": 3,
+  "work_orders": 3,
+  "run_final_statuses": [
+    "done",
+    "done",
+    "done"
+  ],
+  "harness_work_orders": [
+    "Collect the user-visible outcome, interaction scope, acceptance criteria, constraints, and compatibility requirements. Write the complete requirements artifact before the next stage.",
+    "Explain the page structure, interaction flow, state and data design, component boundaries, error states, and implementation strategy. Write the complete design artifact before the next stage.",
+    "Turn the approved design into concrete, testable work orders. Record task boundaries, test scope, implementation decisions, and a test report location. Do not proceed until this stage artifact is complete."
+  ],
+  "run_input_bytes": [
+    578,
+    578,
+    578
+  ],
+  "mode_harness": {
+    "calls": 3,
+    "per_turn_input_bytes": [
+      182,
+      191,
+      205
+    ],
+    "cumulative_input": 578,
+    "cumulative_token_estimate": 232,
+    "largest_single_input": 205
+  },
+  "mode_static": {
+    "calls": 3,
+    "per_turn_input_bytes": [
+      1823,
+      1823,
+      1823
+    ],
+    "cumulative_input": 5469,
+    "cumulative_token_estimate": 2188,
+    "largest_single_input": 1823,
+    "static_prompt_bytes": 1797
+  }
+}

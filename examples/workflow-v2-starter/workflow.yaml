@@ -1,0 +1,30 @@
+version: v2
+entry: draft
+terminal: done
+producer_timeout_seconds: 30
+steps:
+  draft:
+    title: Draft
+    guide: Draft a concise requirement note in docs/draft.md.
+    gates:
+      - id: draft_file
+        type: file_exists
+        path: docs/draft.md
+    transitions:
+      - to: review
+        default: true
+  review:
+    title: Review
+    guide: Decide whether the draft needs another pass.
+    condition_producers:
+      needs_revisit:
+        type: command
+        command: "grep -q 'revisit' docs/draft.md"
+    transitions:
+      - to: draft
+        when: needs_revisit == true
+      - to: done
+        default: true
+  done:
+    title: Done
+    guide: null

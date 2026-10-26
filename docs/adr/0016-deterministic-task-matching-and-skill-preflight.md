@@ -1,0 +1,3 @@
+# Deterministic task matching and skill preflight
+
+The control plane will match a requested workflow run using exact workflow-alias and task-title equality after minimal normalization, such as trimming and collapsing whitespace; semantic or embedding-based matching is not allowed. A workflow skill can preflight by reading `.workflow-harness/task.json`, judging whether the user's request semantically matches its title, and then passing the existing title for `start` or calling `next`. If no task anchor exists, the agent may generate a concise new task title. This preserves model judgment for choosing the established title while keeping the control plane deterministic and authoritative.

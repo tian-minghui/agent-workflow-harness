@@ -1,0 +1,208 @@
+{
+  "case": "B",
+  "objective": "real npm-test gate enforcement and terminal workflow completion",
+  "repetitions": 3,
+  "pass_runs": [
+    {
+      "label": "pass-0",
+      "start_status": "active",
+      "npm_test_before_gate": {
+        "exit_code": 0,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "npm_test_after_repair": {
+        "exit_code": 0,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "gate_evaluation_status": "active",
+      "gate_blocked_reason": null,
+      "harness_final_status": "done",
+      "harness_done": true,
+      "harness_false_complete": false,
+      "gate_calls": 1,
+      "static_declared_complete": false
+    },
+    {
+      "label": "pass-1",
+      "start_status": "active",
+      "npm_test_before_gate": {
+        "exit_code": 0,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "npm_test_after_repair": {
+        "exit_code": 0,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "gate_evaluation_status": "active",
+      "gate_blocked_reason": null,
+      "harness_final_status": "done",
+      "harness_done": true,
+      "harness_false_complete": false,
+      "gate_calls": 1,
+      "static_declared_complete": false
+    },
+    {
+      "label": "pass-2",
+      "start_status": "active",
+      "npm_test_before_gate": {
+        "exit_code": 0,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "npm_test_after_repair": {
+        "exit_code": 0,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "gate_evaluation_status": "active",
+      "gate_blocked_reason": null,
+      "harness_final_status": "done",
+      "harness_done": true,
+      "harness_false_complete": false,
+      "gate_calls": 1,
+      "static_declared_complete": false
+    }
+  ],
+  "fail_runs": [
+    {
+      "label": "fail-0",
+      "start_status": "active",
+      "npm_test_before_gate": {
+        "exit_code": 1,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "npm_test_after_repair": {
+        "exit_code": 1,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "gate_evaluation_status": "blocked",
+      "gate_blocked_reason": "\n> test\n> python3 check.py\n\ntest gate",
+      "harness_final_status": "blocked",
+      "harness_done": false,
+      "harness_false_complete": false,
+      "gate_calls": 1,
+      "static_declared_complete": true
+    },
+    {
+      "label": "fail-1",
+      "start_status": "active",
+      "npm_test_before_gate": {
+        "exit_code": 1,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "npm_test_after_repair": {
+        "exit_code": 1,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "gate_evaluation_status": "blocked",
+      "gate_blocked_reason": "\n> test\n> python3 check.py\n\ntest gate",
+      "harness_final_status": "blocked",
+      "harness_done": false,
+      "harness_false_complete": false,
+      "gate_calls": 1,
+      "static_declared_complete": true
+    },
+    {
+      "label": "fail-2",
+      "start_status": "active",
+      "npm_test_before_gate": {
+        "exit_code": 1,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "npm_test_after_repair": {
+        "exit_code": 1,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "gate_evaluation_status": "blocked",
+      "gate_blocked_reason": "\n> test\n> python3 check.py\n\ntest gate",
+      "harness_final_status": "blocked",
+      "harness_done": false,
+      "harness_false_complete": false,
+      "gate_calls": 1,
+      "static_declared_complete": true
+    }
+  ],
+  "repair_runs": [
+    {
+      "label": "repair-0",
+      "start_status": "active",
+      "npm_test_before_gate": {
+        "exit_code": 1,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "npm_test_after_repair": {
+        "exit_code": 0,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "gate_evaluation_status": "active",
+      "gate_blocked_reason": null,
+      "harness_final_status": "done",
+      "harness_done": true,
+      "harness_false_complete": false,
+      "gate_calls": 2,
+      "static_declared_complete": false
+    },
+    {
+      "label": "repair-1",
+      "start_status": "active",
+      "npm_test_before_gate": {
+        "exit_code": 1,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "npm_test_after_repair": {
+        "exit_code": 0,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "gate_evaluation_status": "active",
+      "gate_blocked_reason": null,
+      "harness_final_status": "done",
+      "harness_done": true,
+      "harness_false_complete": false,
+      "gate_calls": 2,
+      "static_declared_complete": false
+    },
+    {
+      "label": "repair-2",
+      "start_status": "active",
+      "npm_test_before_gate": {
+        "exit_code": 1,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "npm_test_after_repair": {
+        "exit_code": 0,
+        "stdout": "\n> test\n> python3 check.py\n\ntest gate\n",
+        "stderr": ""
+      },
+      "gate_evaluation_status": "active",
+      "gate_blocked_reason": null,
+      "harness_final_status": "done",
+      "harness_done": true,
+      "harness_false_complete": false,
+      "gate_calls": 2,
+      "static_declared_complete": false
+    }
+  ],
+  "static_prompt_bytes": 1797,
+  "metrics": {
+    "harness_false_complete": false,
+    "harness_blocked_on_fail": true,
+    "harness_repaired_to_done": true,
+    "harness_pass_to_done": true,
+    "static_may_declare_on_fail": true
+  }
+}

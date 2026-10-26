@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Workflow Harness 三场景实验报告</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.16);
+      --text: #eef2ff;
+      --muted: #b9c1e0;
+      --blue: #7aa2ff;
+      --green: #52d273;
+      --red: #ff7b7b;
+      --yellow: #ffd166;
+      --accent: #4cc9f0;
+      --ink: #f8f9ff;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f7f9ff;
+        --card: #ffffff;
+        --border: #d7def2;
+        --text: #101833;
+        --muted: #5d6894;
+        --blue: #3c6ef9;
+        --green: #2f9e5a;
+        --red: #d94664;
+        --yellow: #b87900;
+        --accent: #0987a0;
+        --ink: #101833;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top left, rgba(122,162,255,0.22), transparent 40%), radial-gradient(circle at bottom right, rgba(255,209,102,0.14), transparent 45%), var(--bg);
+      min-height: 100vh;
+      padding: 40px 22px 80px;
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 34px;
+    }
+    h1 { font-size: 30px; margin: 0; letter-spacing: 0.2px; }
+    .subtitle { color: var(--muted); margin-top: 8px; font-size: 15px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--green);
+      color: var(--green);
+      background: rgba(82,210,115,0.1);
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-weight: 700;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+      margin: 24px 0 36px;
+    }
+    .stat {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .stat .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
+    .stat .value { font-size: 20px; font-weight: 700; margin-top: 8px; }
+    .stat .detail { color: var(--muted); margin-top: 6px; font-size: 13px; }
+    h2 { font-size: 20px; margin: 0 0 18px; }
+    section { margin-bottom: 34px; }
+    .card {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+    }
+    .case {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 18px;
+    }
+    @media(max-width: 820px){ .case { grid-template-columns: 1fr; } }
+    .case h3 { margin-top: 0; font-size: 16px; }
+    .case .title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .tag {
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    ul { padding-left: 18px; margin: 0; color: var(--muted); }
+    li { margin: 8px 0; line-height: 1.55; }
+    b { color: var(--text); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+    th, td { border-bottom: 1px solid var(--border); padding: 9px 8px; text-align: left; }
+    th { color: var(--muted); font-weight: 600; font-size: 12px; }
+    td { color: var(--text); }
+    .metric-table { margin-top: 10px; }
+    .chart { margin-top: 10px; display: grid; gap: 10px; }
+    .bar-row { display: grid; grid-template-columns: 120px 1fr 60px; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+    .bar { height: 10px; border-radius: 999px; background: var(--border); overflow: hidden; }
+    .bar span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--blue), var(--accent)); }
+    .bar.static span { background: linear-gradient(90deg, var(--red), var(--yellow)); }
+    .strategy { color: var(--muted); font-size: 13px; margin-top: 12px; }
+    .pill { font-weight: 700; color: var(--text); }
+    .footer { border-top: 1px solid var(--border); margin-top: 30px; padding-top: 18px; color: var(--muted); font-size: 12px; }
+    .source { color: var(--blue); word-break: break-all; }
+    code { background: rgba(122,162,255,0.12); color: var(--text); border-radius: 6px; padding: 2px 6px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Agent Workflow Harness 三场景实验报告</h1>
+        <div class="subtitle">对比控制面驱动工作流 vs. 静态 Step1/Step2 skill prompt</div>
+      </div>
+      <div class="badge">✅ 三组场景全部完成</div>
+    </header>
+
+    <section>
+      <h2>实验结论总览</h2>
+      <div class="grid">
+        <div class="stat">
+          <div class="label">场景 A / 顺序稳定性</div>
+          <div class="value">100% 物理阻断</div>
+          <div class="detail">缺失上游 requirement 时，harness 3/3 次被 <code>blocked</code></div>
+        </div>
+        <div class="stat">
+          <div class="label">场景 B / 真实命令门禁</div>
+          <div class="value">3/3 → done</div>
+          <div class="detail"><code>npm test</code> 通过与修复场景均推进到 <code>done</code>，失败场景保持 <code>blocked</code></div>
+        </div>
+        <div class="stat">
+          <div class="label">场景 C / 单流程输入成本</div>
+          <div class="value">降低约 89.4%</div>
+          <div class="detail">578 bytes vs. 5469 bytes，估算 token 232 vs. 2188</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>关键对比</h2>
+        <table class="metric-table">
+          <thead>
+            <tr><th>Capability</th><th>Harness</th><th>Static skill</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>顺序控制</td>
+              <td>控制面强制</td>
+              <td>依赖 agent 自理解和自律</td>
+            </tr>
+            <tr>
+              <td>门禁执行</td>
+              <td>真实 command gate</td>
+              <td>仅在 prompt 中说明</td>
+            </tr>
+            <tr>
+              <td>状态恢复</td>
+              <td>控制面独立管理</td>
+              <td>无物理投影</td>
+            </tr>
+            <tr>
+              <td>输入暴露</td>
+              <td>逐 stage work order</td>
+              <td>每 turn 完整 prompt</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>场景 A — 上游 artifact 缺失时的推进稳定性</h2>
+      <div class="card">
+        <h3>具体对比</h3>
+        <table>
+          <thead><tr><th>对比维度</th><th>Harness</th><th>Static skill</th></tr></thead>
+          <tbody>
+            <tr><td>初始状态</td><td>只有 <code>docs/design.md</code>，缺少 <code>docs/requirements.md</code></td><td>同样缺少 requirement，但只能靠 prompt 提醒</td></tr>
+            <tr><td>推进机制</td><td><code>file_exists</code> gate 检查上游产物</td><td>模型自理解 Step1/Step2，无物理 gate</td></tr>
+            <tr><td>第一次越界</td><td>3/3 被 <code>blocked</code></td><td>2/3 在 drift replay 下自我声明完成</td></tr>
+            <tr><td>失败原因</td><td>返回 <code>docs/requirements.md does not exist</code></td><td>无机器原因，只能靠 agent 口头解释</td></tr>
+            <tr><td>补齐后</td><td>3/3 进入 implementation，最终 <code>done</code></td><td>1/3 honest replay 可识别缺失，2/3 仍存在误判风险</td></tr>
+            <tr><td>证据</td><td><code>case-a.json</code></td><td><code>static-step.md</code> + <code>case-a.json</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card case">
+        <div>
+          <div class="title"><span class="pill">Target</span><span class="tag">Design → Implementation</span><span class="tag">3 runs</span></div>
+          <h3>目标</h3>
+          <ul>
+            <li>验证 agent 只看到当前 stage，能否在缺失 <code>requirements.md</code> 时继续前进。</li>
+            <li>观察 <code>wf next</code> 是否会物理阻断。</li>
+            <li>对比静态 skill 依赖自我判断的风险。</li>
+          </ul>
+        </div>
+        <div>
+          <h3>结果</h3>
+          <table>
+            <thead><tr><th>Run</th><th>Harness</th><th>Static risk</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>blocked</td><td>honest replay</td></tr>
+              <tr><td>2</td><td>blocked</td><td>drift</td></tr>
+              <tr><td>3</td><td>blocked</td><td>drift</td></tr>
+            </tbody>
+          </table>
+          <div class="strategy">坏情况：2/3 次静态 agent 因只关注最新 design artifact 而错误自我声明完成。</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>场景 B — 命令 gate 失败与修复</h2>
+      <div class="card">
+        <h3>具体对比</h3>
+        <table>
+          <thead><tr><th>对比维度</th><th>Harness</th><th>Static skill</th></tr></thead>
+          <tbody>
+            <tr><td>Pass 场景</td><td>3/3 <code>npm test</code> 退出码 0，随后 <code>active</code> → <code>done</code></td><td>Prompt 里有相同要求，但由 agent 自判</td></tr>
+            <tr><td>Fail 场景</td><td>3/3 保持 <code>blocked</code>，不会误判为完成</td><td>3/3 模拟剧情里直接自我声明完成</td></tr>
+            <tr><td>Repair 场景</td><td>3/3 从失败到修复，第二次 gate 调用后进入 <code>done</code></td><td>无可观测 gate 调用次数，仅靠 <code>npm test</code> 文字提醒</td></tr>
+            <tr><td>错误证据</td><td>自动捕获 stdout/stderr 和 exit code</td><td>依赖 agent 是否记得把 stdout/stderr 带回</td></tr>
+            <tr><td>证据</td><td><code>case-b.json</code></td><td><code>static-step.md</code> + <code>case-b.json</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card case">
+        <div>
+          <h3>目标</h3>
+          <ul>
+            <li>确认 harness 是否必须在 <code>npm test</code> 退出码为 0 时才允许继续。</li>
+            <li>记录真实命令输出、失败原因与修复路径。</li>
+            <li>验证 pass / fail / repair 三种状态都能稳定复现。</li>
+          </ul>
+        </div>
+        <div>
+          <h3>结果</h3>
+          <table>
+            <thead><tr><th>场景</th><th>初始结果</th><th>最终状态</th></tr></thead>
+            <tbody>
+              <tr><td>Pass</td><td>exit 0</td><td>done</td></tr>
+              <tr><td>Fail</td><td>exit 1</td><td>blocked</td></tr>
+              <tr><td>Repair</td><td>exit 1 → 0</td><td>done</td></tr>
+            </tbody>
+          </table>
+          <div class="strategy">失败场景的全部 gate 调用都记录在 <code>case-b.json</code>，包含 stdout、stderr、retry count。</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>场景 C — 单流程输入成本</h2>
+      <div class="card">
+        <h3>补充对比</h3>
+        <table>
+          <thead><tr><th>对比维度</th><th>Harness</th><th>Static skill</th></tr></thead>
+          <tbody>
+            <tr><td>每轮输入</td><td>182 / 191 / 205 bytes</td><td>1823 / 1823 / 1823 bytes</td></tr>
+            <tr><td>输入结构</td><td>每轮只包含当前 work order</td><td>每轮都携带完整 Step1-6 流程</td></tr>
+            <tr><td>累计输入</td><td>578 bytes</td><td>5469 bytes</td></tr>
+            <tr><td>Token 估算</td><td>232 tokens</td><td>2188 tokens</td></tr>
+            <tr><td>最大单轮</td><td>205 bytes</td><td>1823 bytes</td></tr>
+            <tr><td>证据</td><td><code>case-c.json</code> 的 work orders</td><td><code>case-c.json</code> 的 static prompt bytes</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="case">
+          <div>
+            <h3>目标</h3>
+            <ul>
+              <li>对比同一三阶段流程的逐 turn 输入体积。</li>
+              <li>Harness 只展示当前 stage 的 work order。</li>
+              <li>Static skill 每次 turn 都需要携带完整 Step1-6。</li>
+            </ul>
+          </div>
+          <div>
+            <h3>关键数字</h3>
+            <table>
+              <thead><tr><th>Mode</th><th>Total bytes</th><th>Token estimate</th></tr></thead>
+              <tbody>
+                <tr><td>Harness</td><td>578</td><td>232</td></tr>
+                <tr><td>Static skill</td><td>5469</td><td>2188</td></tr>
+              </tbody>
+            </table>
+            <div class="chart">
+              <div class="bar-row"><span>Harness</span><div class="bar"><span style="width:10.6%"></span></div><span>578 B</span></div>
+              <div class="bar-row"><span>Static</span><div class="bar static"><span style="width:100%"></span></div><span>5469 B</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>可审计事实清单</h2>
+      <div class="card">
+        <table>
+          <thead>
+            <tr><th>维度</th><th>事实</th><th>来源</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>实验日期</td><td>2026-10-22</td><td><code>docs/workflow-validation/results/2026-10-22-final/</code></td></tr>
+            <tr><td>实验分支</td><td><code>three-case-harness-validation</code></td><td>Git</td></tr>
+            <tr><td>Baseline commit</td><td><code>c1b4cc3</code></td><td>Git</td></tr>
+            <tr><td>Feature commit</td><td><code>10a571d</code></td><td>Git</td></tr>
+            <tr><td>Review-resolution commit</td><td><code>914785b</code></td><td>Git</td></tr>
+            <tr><td>AI Pages source commit</td><td><code>1e48105</code></td><td>Git</td></tr>
+            <tr><td>核心实现修改</td><td>未修改 <code>agent_workflow_harness/</code> 内部文件</td><td><code>git diff</code></td></tr>
+            <tr><td>核心测试</td><td><code>npm test</code>，44/44 通过</td><td><code>docs/test-report.md</code></td></tr>
+            <tr><td>Benchmark 测试</td><td>2/2 通过</td><td><code>docs/workflow-validation/benchmarks/test_run_cases.py</code></td></tr>
+            <tr><td>原始证据包</td><td>31,336 bytes，含完整 <code>WF_HOME</code>、project workflows、运行产物</td><td><code>raw-run.tar.gz</code></td></tr>
+            <tr><td>静态 prompt 体积</td><td>1,797 bytes</td><td><code>case-c.json</code></td></tr>
+            <tr><td>Harness 单流程输入</td><td>182 / 191 / 205 bytes，总计 578 bytes</td><td><code>case-c.json</code></td></tr>
+            <tr><td>Harness token 估算</td><td>232 tokens（单流程合计）</td><td><code>case-c.json</code></td></tr>
+            <tr><td>Static skill 单轮输入</td><td>1,823 bytes/轮，总计 5,469 bytes</td><td><code>case-c.json</code></td></tr>
+            <tr><td>Static skill token 估算</td><td>2,188 tokens（3 轮合计）</td><td><code>case-c.json</code></td></tr>
+            <tr><td>成本降低</td><td>约 89.4%</td><td><code>case-c.json</code> 计算</td></tr>
+            <tr><td>场景 A 阻断率</td><td>3/3 在缺失上游 requirement 时保持 <code>blocked</code></td><td><code>case-a.json</code></td></tr>
+            <tr><td>场景 B 阻断率</td><td>3/3 在 <code>npm test</code> 失败时保持 <code>blocked</code></td><td><code>case-b.json</code></td></tr>
+            <tr><td>场景 B 修复率</td><td>3/3 修复后最终 <code>done</code></td><td><code>case-b.json</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>具体执行过程</h2>
+      <div class="card case">
+        <div>
+          <h3>Case A — 顺序控制</h3>
+          <ul>
+            <li>1）创建 design stage 的 isolated workflow，前置 gate 指向 <code>docs/requirements.md</code>。</li>
+            <li>2）只生成 <code>docs/design.md</code>，不生成 <code>docs/requirements.md</code>。</li>
+            <li>3）调用 <code>wf next</code>，3/3 得到 <code>blocked</code>，原因是 <code>docs/requirements.md does not exist</code>。</li>
+            <li>4）补齐 <code>docs/requirements.md</code> 后再次 <code>wf next</code>，进入 implementation。</li>
+            <li>5）补齐 <code>docs/implementation.md</code> 后最终 <code>wf next</code>，3/3 终态 <code>done</code>。</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Case B — 命令 gate</h3>
+          <ul>
+            <li>1）分别创建 <code>pass / fail / repair</code> 三个 isolated project。</li>
+            <li>2）每个场景均包含 <code>implementation.txt</code>、<code>check.py</code>、<code>package.json</code>、<code>docs/review.md</code>。</li>
+            <li>3）Pass：<code>npm test</code> 退出码 0，首次 <code>wf next</code> 为 <code>active</code>。</li>
+            <li>4）Fail：<code>npm test</code> 退出码 1，首次 <code>wf next</code> 为 <code>blocked</code>，重试 1 次。</li>
+            <li>5）Repair：先失败后修复，<code>npm test</code> 变为退出码 0，<code>gate_calls=2</code>，最终 <code>done</code>。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card case">
+        <div>
+          <h3>Case C — 逐轮输入</h3>
+          <ul>
+            <li>1）记录 3 个真实 work order：需求、设计、实现。</li>
+            <li>2）逐轮输入分别为 182 / 191 / 205 bytes，总和 578 bytes。</li>
+            <li>3）静态 skill 在每轮重复完整 prompt，单轮 1823 bytes，总和 5469 bytes。</li>
+            <li>4）总量对比：578 vs 5469 bytes，约 89.4% 输入缩减。</li>
+          </ul>
+        </div>
+        <div>
+          <h3>验证与发布</h3>
+          <ul>
+            <li>1）<code>python -m unittest discover -s docs/workflow-validation/benchmarks -v</code>，2/2 通过。</li>
+            <li>2）<code>npm test</code>，44/44 通过。</li>
+            <li>3）生成 <code>report.html</code> 与 <code>REPORT.md</code> 审计版报告。</li>
+            <li>4）使用 <code>apc publish --entry docs/workflow-validation/report.html --output json</code> 发布到 AI Pages。</li>
+            <li>5）线上校验 HTTP 200。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>证据与复现</h2>
+      <div class="card">
+        <ul>
+          <li><b>实验脚本：</b> <code>docs/workflow-validation/benchmarks/runner.py</code></li>
+          <li><b>测试用例：</b> <code>docs/workflow-validation/benchmarks/test_run_cases.py</code></li>
+          <li><b>机器结果：</b> <code>docs/workflow-validation/results/2026-10-22-final/</code></li>
+          <li><b>原始 sandbox：</b> <code>docs/workflow-validation/results/2026-10-22-final/raw-run.tar.gz</code></li>
+          <li><b>审计报告：</b> <code>docs/workflow-validation/REPORT.md</code></li>
+        </ul>
+        <div class="footer">
+          生成：2026-10-22 · 数据来源：真实 `wf start` / `wf next` 调用 · 未修改核心实现
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

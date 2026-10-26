@@ -1,0 +1,3 @@
+# Repo-root task anchor available to the agent
+
+V1.1 will write a minimal task anchor at `.workflow-harness/task.json` in the project root so an agent can read the active task title without contacting the control plane. The anchor schema is `agent-workflow-harness.task-anchor.v1` and contains only `workflow_alias` and `title`. It does not contain the task ID, workflow path, state, history, or future stages. The control-plane current-task record remains authoritative, exact alias/title matching remains deterministic, and a mismatch between the anchor and control-plane active task is an error rather than a reason to advance.

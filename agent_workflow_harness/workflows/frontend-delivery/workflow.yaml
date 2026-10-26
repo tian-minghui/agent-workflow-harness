@@ -1,0 +1,136 @@
+version: v2
+entry: 需求澄清
+terminal: 完成
+steps:
+  需求澄清:
+    title: 需求澄清
+    guide: '澄清当前前端需求的目标、交互边界、验收标准和兼容性要求。
+
+      把结论整理到 ${taskDir}/requirements.md。'
+    gates:
+    - id: requirements_file
+      type: file_exists
+      path: ${taskDir}/requirements.md
+    - id: requirements_content
+      type: command
+      command: "grep -q \"目标\" ${taskDir}/requirements.md || {\n  printf '${taskDir}/requirements.md\
+        \ 中未找到关键字：目标\\n' >&2\n  exit 1\n}\n"
+    - id: requirements_confirmed_by_user
+      type: human
+      request: 请确认当前目标、业务边界和验收标准是否符合你的真实预期。
+      evidence:
+      - ${taskDir}/requirements.md
+    transitions:
+    - to: 方案设计
+      default: true
+  方案设计:
+    title: 方案设计
+    guide: '根据需求确定页面结构、交互流程、数据状态和实现方案。
+
+      把方案整理到 ${taskDir}/design.md。'
+    gates:
+    - id: design_file
+      type: file_exists
+      path: ${taskDir}/design.md
+    - id: design_content
+      type: command
+      command: "grep -q \"方案\" ${taskDir}/design.md || {\n  printf '${taskDir}/design.md 中未找到关键字：方案\\\
+        n' >&2\n  exit 1\n}\n"
+    - id: design_confirmed_by_user
+      type: human
+      request: 请确认技术方案、交互结构、数据状态和取舍是否符合你的预期。
+      evidence:
+      - ${taskDir}/design.md
+    transitions:
+    - to: 任务拆分
+      default: true
+  任务拆分:
+    title: 任务拆分
+    guide: '把方案拆成可执行、可验证的前端任务，并标出测试范围。
+
+      把结果整理到 ${taskDir}/tasks.md。'
+    gates:
+    - id: tasks_file
+      type: file_exists
+      path: ${taskDir}/tasks.md
+    - id: tasks_content
+      type: command
+      command: "grep -q \"测试\" ${taskDir}/tasks.md || {\n  printf '${taskDir}/tasks.md 中未找到关键字：测试\\\
+        n' >&2\n  exit 1\n}\n"
+    transitions:
+    - to: 页面实现
+      default: true
+  页面实现:
+    title: 页面实现
+    guide: '按方案完成前端页面与交互实现。
+
+      如项目支持测试优先，可调用 /tdd；完成后把关键决策整理到 ${taskDir}/implementation.md。'
+    gates:
+    - id: implementation_file
+      type: file_exists
+      path: ${taskDir}/implementation.md
+    - id: implementation_content
+      type: command
+      command: "grep -q \"实现\" ${taskDir}/implementation.md || {\n  printf '${taskDir}/implementation.md\
+        \ 中未找到关键字：实现\\n' >&2\n  exit 1\n}\n"
+    transitions:
+    - to: 自动化测试
+      default: true
+  自动化测试:
+    title: 自动化测试
+    guide: '运行 npm test，确认核心逻辑和主要交互有自动化验证。
+
+      把测试结果整理到 ${taskDir}/test-report.md。'
+    gates:
+    - id: test_file
+      type: file_exists
+      path: ${taskDir}/test-report.md
+    - id: npm_test
+      type: command
+      command: npm test
+    transitions:
+    - to: CodeReview
+      default: true
+  CodeReview:
+    title: CodeReview
+    guide: '对前端实现做一次独立评审，重点关注交互一致性、边界条件和可维护性。
+
+      按 workflow 自带的 CodeReview 报告模板整理 ${taskDir}/code-review.md。
+
+      每个问题都必须填写“状态：已修复”，并在“## 结论”中记录“未修复问题数：0”。'
+    gates:
+    - id: code_review_file
+      type: file_exists
+      path: ${taskDir}/code-review.md
+    - id: code_review_all_issues_fixed
+      type: workflow_script
+      script: resources/code_review_gate.py
+      project_args:
+      - ${taskDir}/code-review.md
+    transitions:
+    - to: 提PR
+      default: true
+  提PR:
+    title: 提PR
+    guide: '整理需求、实现、测试和评审要点，准备可合并的 PR。
+
+      可调用 /pr，完成后把 PR 信息整理到 ${taskDir}/pr.md。'
+    gates:
+    - id: pr_file
+      type: file_exists
+      path: ${taskDir}/pr.md
+    - id: pr_content
+      type: command
+      command: "grep -q \"PR\" ${taskDir}/pr.md || {\n  printf '${taskDir}/pr.md 中未找到关键字：PR\\\
+        n' >&2\n  exit 1\n}\n"
+    - id: pr_confirmed_by_user
+      type: human
+      request: 请确认最终交付内容、PR 说明和提交范围可以进入 PR 流程。
+      evidence:
+      - ${taskDir}/pr.md
+    transitions:
+    - to: 完成
+      default: true
+  完成:
+    title: 完成
+    guide: null

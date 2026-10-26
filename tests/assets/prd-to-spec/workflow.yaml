@@ -1,0 +1,61 @@
+version: v2
+entry: architecture_split
+terminal: done
+producer_timeout_seconds: 5
+steps:
+  architecture_split:
+    title: Architecture split
+    guide: Define the architecture split.
+    gates: []
+    transitions:
+      - to: confirmed_prd
+        when: entry_mode == confirmed_prd
+      - to: technical_contract
+        default: true
+  confirmed_prd:
+    title: Confirmed PRD
+    guide: Work from the confirmed PRD entry mode.
+    gates: []
+    transitions:
+      - to: technical_contract
+        default: true
+  technical_contract:
+    title: Technical contract
+    guide: Decide whether cross-application clarification is needed.
+    gates: []
+    condition_producers:
+      needs_contract:
+        type: workflow_script
+        script: scripts/needs_contract.py
+        project_args:
+          - evidence/contract.txt
+    transitions:
+      - to: contract_clarification
+        when: needs_contract == true
+      - to: routing_gap
+        default: true
+  contract_clarification:
+    title: Contract clarification
+    guide: Clarify the cross-application contract.
+    gates: []
+    transitions:
+      - to: routing_gap
+        default: true
+  routing_gap:
+    title: Routing gap
+    guide: Re-evaluate the routing gap.
+    gates: []
+    condition_producers:
+      needs_revisit:
+        type: workflow_script
+        script: scripts/needs_revisit.py
+        project_args:
+          - evidence/routing.txt
+    transitions:
+      - to: architecture_split
+        when: needs_revisit == true
+      - to: done
+        default: true
+  done:
+    title: Done
+    guide: null

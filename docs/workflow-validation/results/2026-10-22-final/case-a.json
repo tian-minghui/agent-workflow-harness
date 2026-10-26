@@ -1,0 +1,53 @@
+{
+  "case": "A",
+  "objective": "block design-to-implementation movement until the upstream requirement exists",
+  "repetitions": 3,
+  "drift_replay": [
+    false,
+    true,
+    true
+  ],
+  "runs": [
+    {
+      "repetition": 0,
+      "workflow_path": "case-a/harness-home-0/workflows/case-a.yaml",
+      "harness_start_status": "active",
+      "harness_blocked_before_upstream_requirement": "blocked",
+      "harness_blocked_reason": "docs/requirements.md does not exist",
+      "harness_implementation_status": "active",
+      "harness_final_status": "done",
+      "harness_false_complete": false,
+      "static_declared_complete_without_requirement": false,
+      "static_reason": "honest replay: the static skill still noticed the missing required artifact"
+    },
+    {
+      "repetition": 1,
+      "workflow_path": "case-a/harness-home-1/workflows/case-a.yaml",
+      "harness_start_status": "active",
+      "harness_blocked_before_upstream_requirement": "blocked",
+      "harness_blocked_reason": "docs/requirements.md does not exist",
+      "harness_implementation_status": "active",
+      "harness_final_status": "done",
+      "harness_false_complete": false,
+      "static_declared_complete_without_requirement": true,
+      "static_reason": "recent-design bias: the agent trusted the newest artifact and skipped the upstream requirement check"
+    },
+    {
+      "repetition": 2,
+      "workflow_path": "case-a/harness-home-2/workflows/case-a.yaml",
+      "harness_start_status": "active",
+      "harness_blocked_before_upstream_requirement": "blocked",
+      "harness_blocked_reason": "docs/requirements.md does not exist",
+      "harness_implementation_status": "active",
+      "harness_final_status": "done",
+      "harness_false_complete": false,
+      "static_declared_complete_without_requirement": true,
+      "static_reason": "recent-design bias: the agent trusted the newest artifact and skipped the upstream requirement check"
+    }
+  ],
+  "metrics": {
+    "harness_declared_without_upstream_requirement": false,
+    "harness_blocked_before_upstream_requirement_rate": 1.0,
+    "static_declared_without_upstream_requirement_rate": 0.6666666666666666
+  }
+}

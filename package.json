@@ -1,0 +1,8 @@
+{
+  "name": "agent-workflow-harness-benchmarks",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "test": "python3 -m unittest discover -v"
+  }
+}

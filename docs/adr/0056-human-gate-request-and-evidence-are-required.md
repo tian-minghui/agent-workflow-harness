@@ -1,0 +1,3 @@
+# Human-gate request and evidence are required
+
+A `type: human` gate must declare a nonempty `request` and a nonempty list of relative `evidence` paths. The request states the business question the human is answering; the evidence paths define the artifacts whose fingerprints bind the decision. The request is bounded to 300 characters, and each evidence path is bounded to 100 characters, with at most five evidence paths. Validation rejects absolute paths, `..` traversal, duplicate paths, control characters, oversized requests or evidence paths, or a human gate with missing required fields before a workflow task can start.

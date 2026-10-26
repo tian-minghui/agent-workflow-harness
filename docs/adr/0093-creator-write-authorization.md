@@ -1,0 +1,7 @@
+# Creator write authorization
+
+`workflow-harness-creator` treats a new project-local package differently from an existing package. After the user explicitly invokes the creator, it may create a previously absent `<project>/.agents/workflows/<alias>/` directly, validate the result, and report that the project package shadows any user or built-in package using the same alias. This path is safe to automate because the manual invocation and project-local default already establish the creation scope and no existing asset is overwritten.
+
+Modifying an existing package requires an approval step. The creator must show the package, alias, affected files, and change summary, then wait for the user to confirm the write. If the package is bound to an active task, changing its definition or condition producers can affect source-drift and routing behavior; therefore a revision to an existing package is not treated as merely another instance of creation. A user may combine the modification request with explicit “write directly” approval, after which the creator does not ask a second time.
+
+The user-level catalog is writable only after an explicit user-level request and still requires the same existing-package approval. The built-in catalog is never a creator output target; requested changes to built-in workflows require a project-local override or a harness code change through the normal repository delivery process.

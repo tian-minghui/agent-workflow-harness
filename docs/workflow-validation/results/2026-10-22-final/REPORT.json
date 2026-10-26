@@ -1,0 +1,26 @@
+{
+  "cases": [
+    {
+      "id": "A",
+      "claim": "harness improves deterministic stage order",
+      "outcome": "demonstrated"
+    },
+    {
+      "id": "B",
+      "claim": "harness enforces real command gates",
+      "outcome": "demonstrated"
+    },
+    {
+      "id": "C",
+      "claim": "harness minimizes per-turn input exposure",
+      "outcome": "demonstrated"
+    }
+  ],
+  "overall_claim": "demonstrated",
+  "overall_scope": "the three specific, reproducible benchmark cases",
+  "limitations": [
+    "Static-skill behavior is modeled as a deterministic distracted agent, not a full production agent.",
+    "Token count is a deterministic byte-based estimate, not a vendor tokenizer.",
+    "Latency and non-execution concurrency behavior are not evaluated."
+  ]
+}

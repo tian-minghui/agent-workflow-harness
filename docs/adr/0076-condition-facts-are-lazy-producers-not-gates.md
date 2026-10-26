@@ -1,0 +1,7 @@
+# Condition facts are lazy producers, not gates
+
+A workflow package may define a producer for a condition variable used by a candidate edge. The control plane does not evaluate that producer when the task starts or when the step begins. `wf next` first evaluates the active step’s ordinary gates. Only after all of those gates pass does it inspect the step’s candidate edges and lazily invoke the producer for a condition variable that still has no resolved value.
+
+This placement preserves two boundaries. Ordinary gates remain the step’s completion checks and continue to return `blocked` with a repair order when they fail. A conditional fact, however, is part of route selection after an otherwise-valid stage, so a producer cannot run, a timeout, malformed output, or an unsupported result is an operational `error`, not a current-stage repair instruction. Runtime facts remain control-plane-authored records; the agent may influence the project evidence read by the producer but cannot write the fact or routing state directly.
+
+The narrow transition syntax stays independent of producer details: the edge declares only `when: <condition-variable> == <literal>`. A producer is associated with the logical condition variable in the workflow package, not inlined into the transition. This keeps business routing readable while allowing future controlled providers, including Jev-style decision models, to produce values behind the same interface.

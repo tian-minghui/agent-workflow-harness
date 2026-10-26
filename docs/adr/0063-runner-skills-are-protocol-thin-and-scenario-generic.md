@@ -1,0 +1,3 @@
+# Runner skills are protocol thin and scenario generic
+
+A runner skill may be domain specific enough to select its workflow alias and apply durable project discipline, but it is not a reproduction of the workflow definition. It may contain sequence-agnostic principles such as state-chain continuity, traceability, blocking repair, and pausing for human decisions; it must not contain stage order, step-to-skill mappings, stage deliverables, gate lists, or the graph. Stage-specific contracts live in workflow-bundle stage briefs, which the control plane projects only into the active stage work order.

@@ -1,0 +1,103 @@
+version: v2
+entry: 会前信息
+terminal: 完成
+steps:
+  会前信息:
+    title: 会前信息
+    guide: '收集会议主题、参与人、背景材料和期望结论。
+
+      将信息写入 ${taskDir}/meeting-brief.md。'
+    gates:
+    - id: brief_file
+      type: file_exists
+      path: ${taskDir}/meeting-brief.md
+    - id: brief_content
+      type: command
+      command: "grep -q \"主题\" ${taskDir}/meeting-brief.md || {\n  printf '${taskDir}/meeting-brief.md\
+        \ 中未找到关键字：主题\\n' >&2\n  exit 1\n}\n"
+    transitions:
+    - to: 议题归纳
+      default: true
+  议题归纳:
+    title: 议题归纳
+    guide: '把会议信息拆成清晰议题，合并重复项并标注优先级。
+
+      将结果写入 ${taskDir}/topics.md。'
+    gates:
+    - id: topics_file
+      type: file_exists
+      path: ${taskDir}/topics.md
+    - id: topics_content
+      type: command
+      command: "grep -q \"议题\" ${taskDir}/topics.md || {\n  printf '${taskDir}/topics.md 中未找到关键字：议题\\\
+        n' >&2\n  exit 1\n}\n"
+    transitions:
+    - to: 结论提炼
+      default: true
+  结论提炼:
+    title: 结论提炼
+    guide: '逐条整理会议结论，只保留可执行且与会人员确认的信息。
+
+      将结论写入 ${taskDir}/conclusions.md。'
+    gates:
+    - id: conclusions_file
+      type: file_exists
+      path: ${taskDir}/conclusions.md
+    - id: conclusions_content
+      type: command
+      command: "grep -q \"结论\" ${taskDir}/conclusions.md || {\n  printf '${taskDir}/conclusions.md\
+        \ 中未找到关键字：结论\\n' >&2\n  exit 1\n}\n"
+    transitions:
+    - to: 行动项分配
+      default: true
+  行动项分配:
+    title: 行动项分配
+    guide: '为每个结论拆出行动项、责任人和截止时间。
+
+      将行动项写入 ${taskDir}/actions.md。'
+    gates:
+    - id: actions_file
+      type: file_exists
+      path: ${taskDir}/actions.md
+    - id: actions_content
+      type: command
+      command: "grep -q \"行动项\" ${taskDir}/actions.md || {\n  printf '${taskDir}/actions.md 中未找到关键字：行动项\\\
+        n' >&2\n  exit 1\n}\n"
+    transitions:
+    - to: 风险梳理
+      default: true
+  风险梳理:
+    title: 风险梳理
+    guide: '标注未达成共识的事项、执行风险和需要二次确认的问题。
+
+      将风险写入 ${taskDir}/meeting-risks.md。'
+    gates:
+    - id: risks_file
+      type: file_exists
+      path: ${taskDir}/meeting-risks.md
+    - id: risks_content
+      type: command
+      command: "grep -q \"风险\" ${taskDir}/meeting-risks.md || {\n  printf '${taskDir}/meeting-risks.md\
+        \ 中未找到关键字：风险\\n' >&2\n  exit 1\n}\n"
+    transitions:
+    - to: 纪要归档
+      default: true
+  纪要归档:
+    title: 纪要归档
+    guide: '将结论、行动项和风险整合成一份可直接发送的会议纪要。
+
+      将纪要写入 ${taskDir}/meeting-summary.md。'
+    gates:
+    - id: summary_file
+      type: file_exists
+      path: ${taskDir}/meeting-summary.md
+    - id: summary_content
+      type: command
+      command: "grep -q \"纪要\" ${taskDir}/meeting-summary.md || {\n  printf '${taskDir}/meeting-summary.md\
+        \ 中未找到关键字：纪要\\n' >&2\n  exit 1\n}\n"
+    transitions:
+    - to: 完成
+      default: true
+  完成:
+    title: 完成
+    guide: null
