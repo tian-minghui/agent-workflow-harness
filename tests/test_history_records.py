@@ -63,9 +63,14 @@ class HistoryRecordTest(unittest.TestCase):
                 [event["event"] for event in events],
                 ["started", "blocked", "success", "done"],
             )
+            local_now = datetime.now().astimezone()
             for event in events:
-                parsed_time = datetime.fromisoformat(event["timestamp"].replace("Z", "+00:00"))
+                parsed_time = datetime.fromisoformat(str(event["timestamp"]))
                 self.assertIsNotNone(parsed_time.tzinfo)
+                self.assertEqual(parsed_time.utcoffset(), local_now.utcoffset())
+                self.assertLessEqual(
+                    abs((parsed_time - local_now).total_seconds()), 300
+                )
 
             state = json.loads(state_path.read_text(encoding="utf-8"))
             self.assertEqual(state["schema"], "agent-workflow-harness.task-state.v2")

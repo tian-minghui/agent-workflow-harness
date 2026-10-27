@@ -4,16 +4,12 @@ import json
 from dataclasses import dataclass
 
 from agent_workflow_harness.storage import atomic_write_text
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 
 
 def _event_timestamp() -> str:
-    return (
-        datetime.now(timezone.utc)
-        .isoformat(timespec="milliseconds")
-        .replace("+00:00", "Z")
-    )
+    return datetime.now().astimezone().isoformat(timespec="milliseconds")
 
 
 @dataclass(frozen=True)

@@ -1,7 +1,7 @@
 # History record timestamps and readable serialization
 
 ## Status
-Accepted
+Superseded by ADR-0112
 
 ## Context
 The append-only history log records audit events; runtime state is authoritative in `state.json` (see ADR 0068). Early v1.1 records omitted event times, and `Task.write_state` / `Task.append_history` used Python's default JSON escaping, which made Chinese text appear as `\uXXXX` in control-plane files.
